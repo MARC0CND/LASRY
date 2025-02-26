@@ -138,7 +138,7 @@
       fetch("https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches", {
         method: "POST",
         headers: {
-          "Authorization": `12345678910`,  // Replace with GitHub Secret Token
+          "Authorization": `Bearer ${GH_TOKEN}`,  // Replace with GitHub Secret Token
           "Accept": "application/vnd.github.v3+json",
           "Content-Type": "application/json"
         },
