@@ -1,0 +1,52 @@
+name: Generate Invoice
+
+on:
+  repository_dispatch:
+    types: [generate_invoice]
+
+jobs:
+  generate-invoice:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.9"
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get install -y wkhtmltopdf
+          pip install pdfkit requests jq
+
+      - name: Get Next Invoice Number
+        run: |
+          if [ ! -f invoice_data.json ]; then echo '{"last_invoice": 0}' > invoice_data.json; fi
+          LAST_NUM=$(jq '.last_invoice' invoice_data.json)
+          NEW_NUM=$((LAST_NUM + 1))
+          echo "NEW_INVOICE_NUMBER=2025-$(printf "%03d" $NEW_NUM)" >> $GITHUB_ENV
+          echo '{"last_invoice": '$NEW_NUM'}' > invoice_data.json
+
+      - name: Generate PDF Invoice
+        run: |
+          echo "<html>
+          <head><title>Facture $NEW_INVOICE_NUMBER</title></head>
+          <body>
+          <h1>Facture: $NEW_INVOICE_NUMBER</h1>
+          <p>Nom de l'élève: ${{ github.event.client_payload.student_name }}</p>
+          <p>Montant: $${{ github.event.client_payload.payment_amount }}</p>
+          <p>Raison: ${{ github.event.client_payload.payment_reason }}</p>
+          </body></html>" > invoice.html
+
+          wkhtmltopdf invoice.html invoices/$NEW_INVOICE_NUMBER.pdf
+
+      - name: Commit and Push Invoice
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          git add invoices/$NEW_INVOICE_NUMBER.pdf invoice_data.json
+          git commit -m "Added invoice $NEW_INVOICE_NUMBER"
+          git push
