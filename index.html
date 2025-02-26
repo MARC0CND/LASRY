@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Site protégé - Lasry Education</title>
+  <title>Générateur de Factures - Lasry Education</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     /* ============================
@@ -21,17 +21,14 @@
       border-radius: 5px;
       padding: 20px 40px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
-      position: relative;
     }
     /* ============================
-       Outil de facturation (contenu principal)
-       (Adapté de la version précédente)
+       Outil de facturation
     ============================ */
-    /* Masquer les éléments non destinés à l'impression */
     .no-print {
       display: block;
     }
-    form, .no-print {
+    form {
       margin-bottom: 30px;
     }
     label {
@@ -43,9 +40,9 @@
       width: 100%;
       padding: 8px;
       margin-top: 5px;
-      box-sizing: border-box;
       border: 1px solid #ccc;
       border-radius: 3px;
+      box-sizing: border-box;
     }
     button {
       margin-top: 15px;
@@ -59,357 +56,159 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Mise en page de la facture */
+    /* Facture */
     .invoice {
       margin-top: 30px;
       padding: 40px;
       border: 2px solid #007BFF;
       border-radius: 5px;
-      position: relative;
+      display: none;
     }
-    /* En-tête de la facture : logo et "Facture" à gauche, numéro et centre à droite */
     .invoice-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
       border-bottom: 2px solid #007BFF;
       padding-bottom: 10px;
       margin-bottom: 30px;
-    }
-    .left-header {
-      display: flex;
-      align-items: center;
-    }
-    .left-header img {
-      max-height: 80px;
-      margin-right: 15px;
-    }
-    .left-header h2 {
-      margin: 0;
-      color: #007BFF;
-    }
-    .right-header {
-      text-align: right;
     }
     .invoice-number {
       font-size: 1.2em;
       font-weight: bold;
     }
-    .center-info {
-      font-size: 1em;
-      font-weight: bold;
-      margin-top: 5px;
-    }
-    /* Corps de la facture avec nom de l'élève et montant agrandis */
     .invoice-main {
       margin-bottom: 30px;
     }
     .invoice-row {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .invoice-row .left,
-    .invoice-row .right {
       font-size: 1.5em;
       font-weight: bold;
     }
-    .invoice-reason {
-      margin-top: 10px;
-      font-size: 1em;
-      color: #333;
-    }
-    /* Bas de page : remerciement, signature et date (en bas à droite) */
     .invoice-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
       border-top: 2px solid #007BFF;
       padding-top: 20px;
-    }
-    .footer-left {
-      /* Message de remerciement et signature */
-    }
-    .thank-you {
-      font-size: 1.2em;
-      color: #007BFF;
-    }
-    .signature {
-      font-family: "Brush Script MT", cursive;
-      font-size: 1.5em;
-      color: #333;
-      margin-top: 5px;
-    }
-    .invoice-date {
       text-align: right;
-      font-size: 1em;
-      font-weight: bold;
-      color: #333;
     }
-    /* ============================
-       Styles pour l'impression (Landscape)
-    ============================ */
+    /* Impression */
     @media print {
       @page { size: landscape; }
-      body {
-        background-color: #fff;
-        padding: 40px;
-      }
-      .no-print, form, button {
+      .no-print, button {
         display: none;
       }
       .container {
-        box-shadow: none;
         margin: 0;
         width: 100%;
       }
       .invoice {
-        padding: 40px;
+        display: block;
         width: 100%;
-      }
-    }
-    /* ============================
-       Overlay pour la page de mot de passe
-    ============================ */
-    #passwordOverlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, #007BFF, #00A1FF);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
-      opacity: 1;
-      transition: opacity 1s ease;
-    }
-    #passwordOverlay img {
-      max-width: 200px;
-      margin-bottom: 20px;
-    }
-    #passwordOverlay input {
-      padding: 10px;
-      font-size: 1em;
-      border: none;
-      border-radius: 3px;
-      margin-bottom: 15px;
-      width: 250px;
-      max-width: 80%;
-    }
-    #passwordOverlay button {
-      padding: 10px 20px;
-      font-size: 1em;
-      background-color: #fff;
-      color: #007BFF;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    #passwordOverlay button:hover {
-      background-color: #e0e0e0;
-    }
-    #errorMsg {
-      color: #ffdddd;
-      margin-top: 10px;
-      display: none;
-    }
-    /* ============================
-       Responsive pour téléphones
-    ============================ */
-    @media only screen and (max-width: 600px) {
-      .container {
-        padding: 20px;
-        margin: 20px;
-      }
-      .invoice-header, .invoice-footer, .invoice-row {
-        flex-direction: column;
-        text-align: center;
-      }
-      .invoice-row .left, .invoice-row .right {
-        font-size: 1.3em;
-      }
-      .right-header, .center-info {
-        text-align: center;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Page de verrouillage avec fade out -->
-  <div id="passwordOverlay">
-    <img src="https://static.wixstatic.com/media/a04e80_53c8f399ec0a49689ffda806b14459d9~mv2.png/v1/crop/x_0,y_541,w_3125,h_793/fill/w_803,h_204,al_c,q_85,usm_4.00_1.00_0.00,enc_auto/base_logo_transparent_background.png" alt="Logo Lasry Education">
-    <input type="password" id="passwordInput" placeholder="Entrez le mot de passe">
-    <button id="passwordButton">Entrer</button>
-    <p id="errorMsg">Mot de passe incorrect</p>
-  </div>
-  
-  <!-- Contenu principal : outil de facturation -->
+
   <div class="container">
-    <!-- Formulaire affiché à l'écran uniquement -->
-    <div class="no-print">
-      <h1>Générateur de Factures - Lasry Education</h1>
-      <form id="invoiceForm">
-        <label for="centre">Centre :</label>
-        <select id="centre" required>
-          <option value="">--Sélectionnez un centre--</option>
-          <option value="Laval">Laval</option>
-          <option value="Anjou">Anjou</option>
-          <option value="Acadie">Acadie</option>
-          <option value="West Island">West Island</option>
-        </select>
-        
-        <label for="invoiceNumber">Numéro de facture :</label>
-        <input type="text" id="invoiceNumber" placeholder="ex: 2025-001" required>
-        
-        <label for="studentName">Nom de l'élève :</label>
-        <input type="text" id="studentName" placeholder="Nom de l'élève" required>
-        
-        <label for="tutorName">Nom du tuteur :</label>
-        <input type="text" id="tutorName" placeholder="Nom du tuteur" required>
-        
-        <label for="paymentReason">Raison du paiement :</label>
-        <textarea id="paymentReason" rows="3" placeholder="Expliquer la raison du paiement" required></textarea>
-        
-        <label for="paymentAmount">Montant du paiement ($) :</label>
-        <input type="number" id="paymentAmount" placeholder="Montant en $" step="0.01" required>
-        
-        <button type="button" onclick="generateInvoice()">Générer la facture</button>
-      </form>
-    </div>
+    <h1>Générateur de Factures - Lasry Education</h1>
+    <form id="invoiceForm">
+      <label for="centre">Centre :</label>
+      <select id="centre" required>
+        <option value="">--Sélectionnez un centre--</option>
+        <option value="Laval">Laval</option>
+        <option value="Anjou">Anjou</option>
+        <option value="Acadie">Acadie</option>
+        <option value="West Island">West Island</option>
+      </select>
+      
+      <label for="studentName">Nom de l'élève :</label>
+      <input type="text" id="studentName" required>
+      
+      <label for="tutorName">Nom du tuteur :</label>
+      <input type="text" id="tutorName" required>
+      
+      <label for="paymentReason">Raison du paiement :</label>
+      <textarea id="paymentReason" rows="3" required></textarea>
+      
+      <label for="paymentAmount">Montant du paiement ($) :</label>
+      <input type="number" id="paymentAmount" step="0.01" required>
+      
+      <button type="button" onclick="generateInvoice()">Générer la facture</button>
+    </form>
     
     <!-- Aperçu de la facture -->
-    <div id="invoicePreview" class="invoice" style="display:none;">
-      <!-- En-tête de la facture -->
+    <div id="invoicePreview" class="invoice">
       <div class="invoice-header">
-        <div class="left-header">
-          <img src="https://static.wixstatic.com/media/a04e80_53c8f399ec0a49689ffda806b14459d9~mv2.png/v1/crop/x_0,y_541,w_3125,h_793/fill/w_803,h_204,al_c,q_85,usm_4.00_1.00_0.00,enc_auto/base_logo_transparent_background.png" alt="Logo Lasry Education">
-          <h2>Facture</h2>
-        </div>
-        <div class="right-header">
-          <div class="invoice-number" id="previewInvoiceNumber"></div>
-          <div class="center-info" id="previewCentre"></div>
-        </div>
+        <h2>Facture</h2>
+        <div class="invoice-number" id="previewInvoiceNumber"></div>
       </div>
-      
-      <!-- Corps principal avec le nom de l'élève et le montant -->
       <div class="invoice-main">
         <div class="invoice-row">
-          <div class="left" id="previewStudentName"></div>
-          <div class="right" id="previewPaymentAmount"></div>
+          <div id="previewStudentName"></div>
+          <div id="previewPaymentAmount"></div>
         </div>
-        <div class="invoice-reason" id="previewPaymentReason"></div>
+        <div id="previewPaymentReason"></div>
       </div>
-      
-      <!-- Bas de page : remerciement, signature et date (en bas à droite) -->
       <div class="invoice-footer">
-        <div class="footer-left">
-          <div class="thank-you">Merci de votre confiance,</div>
-          <div class="signature" id="previewTutorName"></div>
-        </div>
-        <div class="invoice-date" id="previewDate"></div>
+        <div id="previewTutorName"></div>
+        <div id="previewDate"></div>
       </div>
     </div>
   </div>
-  
+
   <script>
-    // Gestion de la page de verrouillage (mot de passe)
-    document.addEventListener("DOMContentLoaded", function() {
-    const passwordInput = document.getElementById("passwordInput");
-    const passwordButton = document.getElementById("passwordButton");
-    const passwordOverlay = document.getElementById("passwordOverlay");
-    const errorMsg = document.getElementById("errorMsg");
-
-    passwordButton.addEventListener("click", function(){
-        var password = passwordInput.value.trim(); // Ensure no accidental spaces
-        if(password === "Lasry"){
-            passwordOverlay.style.opacity = "0";
-            setTimeout(function(){
-                passwordOverlay.style.display = "none";
-            }, 500); // Reduced time for faster transition
-        } else {
-            errorMsg.style.display = "block";
-            errorMsg.textContent = "Mot de passe incorrect";
-        }
-    });
-
-    // Allow pressing "Enter" to submit the password
-    passwordInput.addEventListener("keypress", function(e){
-        if(e.key === "Enter"){
-            passwordButton.click();
-        }
-    });
-});
-
-    
-    // Génération de la facture
     function generateInvoice() {
-    const studentName = document.getElementById("studentName").value;
-    const paymentReason = document.getElementById("paymentReason").value;
-    const paymentAmount = document.getElementById("paymentAmount").value;
+      const studentName = document.getElementById("studentName").value;
+      const tutorName = document.getElementById("tutorName").value;
+      const paymentReason = document.getElementById("paymentReason").value;
+      const paymentAmount = document.getElementById("paymentAmount").value;
 
-    if (!studentName || !paymentReason || !paymentAmount) {
+      if (!studentName || !tutorName || !paymentReason || !paymentAmount) {
         alert("Veuillez remplir tous les champs.");
         return;
-    }
+      }
 
-    // GitHub API URL for triggering Actions
-    const GITHUB_API_URL = "https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches";
+      // Mise à jour de l'aperçu de la facture
+      document.getElementById("previewInvoiceNumber").textContent = "Numéro: Généré Automatiquement";
+      document.getElementById("previewStudentName").textContent = studentName;
+      document.getElementById("previewPaymentAmount").textContent = "$ " + parseFloat(paymentAmount).toFixed(2);
+      document.getElementById("previewPaymentReason").textContent = paymentReason;
+      document.getElementById("previewTutorName").textContent = tutorName;
 
-    // Prepare data for GitHub Actions
-    const requestData = {
-        ref: "main",
-        inputs: {
-            student_name: studentName,
-            payment_reason: paymentReason,
-            payment_amount: paymentAmount
-        }
-    };
+      const d = new Date();
+      const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
+      document.getElementById("previewDate").textContent = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
 
-    fetch(GITHUB_API_URL, {
+      // Affichage de l'aperçu de la facture
+      document.getElementById("invoicePreview").style.display = "block";
+
+      // Envoyer les données à GitHub Actions
+      fetch("https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches", {
         method: "POST",
         headers: {
-            "Authorization": `token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN`,  // Don't expose it in frontend!
-            "Accept": "application/vnd.github.v3+json",
-            "Content-Type": "application/json"
+          "Authorization": "token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
         },
-        body: JSON.stringify(requestData)
-    })
-    .then(response => {
+        body: JSON.stringify({
+          ref: "main",
+          inputs: {
+            student_name: studentName,
+            tutor_name: tutorName,
+            payment_reason: paymentReason,
+            payment_amount: paymentAmount
+          }
+        })
+      })
+      .then(response => {
         if (response.status === 204) {
-            alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
+          alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
         } else {
-            alert("Erreur lors de la génération de la facture.");
+          alert("Erreur lors de la génération de la facture.");
         }
-    })
-    .catch(error => console.error("Erreur:", error));
-}
-
-      
-      // Mise à jour de l'aperçu de la facture
-      document.getElementById('previewInvoiceNumber').textContent = "No: " + invoiceNumber;
-      document.getElementById('previewStudentName').textContent = studentName;
-      document.getElementById('previewPaymentAmount').textContent = "$ " + parseFloat(paymentAmount).toFixed(2);
-      document.getElementById('previewPaymentReason').textContent = paymentReason;
-      document.getElementById('previewTutorName').textContent = tutorName;
-      document.getElementById('previewCentre').textContent = centre;
-      
-      // Formatage de la date au format "23 Octobre 2025"
-      const d = new Date();
-      const day = d.getDate();
-      const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-      const month = months[d.getMonth()];
-      const year = d.getFullYear();
-      const dateStr = day + " " + month + " " + year;
-      document.getElementById('previewDate').textContent = dateStr;
-      
-      // Affichage de l'aperçu de la facture
-      document.getElementById('invoicePreview').style.display = 'block';
+      })
+      .catch(error => console.error("Erreur:", error));
     }
   </script>
+
 </body>
 </html>
