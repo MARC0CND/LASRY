@@ -318,26 +318,33 @@
   
   <script>
     // Gestion de la page de verrouillage (mot de passe)
-    document.getElementById("passwordButton").addEventListener("click", function(){
-      var password = document.getElementById("passwordInput").value;
-      if(password === "Lasry"){
-        var overlay = document.getElementById("passwordOverlay");
-        overlay.style.opacity = "0";
-        setTimeout(function(){
-          overlay.style.display = "none";
-        }, 1000);
-      } else {
-        var errorMsg = document.getElementById("errorMsg");
-        errorMsg.style.display = "block";
-        errorMsg.textContent = "Mot de passe incorrect";
-      }
+    document.addEventListener("DOMContentLoaded", function() {
+    const passwordInput = document.getElementById("passwordInput");
+    const passwordButton = document.getElementById("passwordButton");
+    const passwordOverlay = document.getElementById("passwordOverlay");
+    const errorMsg = document.getElementById("errorMsg");
+
+    passwordButton.addEventListener("click", function(){
+        var password = passwordInput.value.trim(); // Ensure no accidental spaces
+        if(password === "Lasry"){
+            passwordOverlay.style.opacity = "0";
+            setTimeout(function(){
+                passwordOverlay.style.display = "none";
+            }, 500); // Reduced time for faster transition
+        } else {
+            errorMsg.style.display = "block";
+            errorMsg.textContent = "Mot de passe incorrect";
+        }
     });
-    // Permettre la validation via la touche "Entrée"
-    document.getElementById("passwordInput").addEventListener("keypress", function(e){
-      if(e.key === "Enter"){
-         document.getElementById("passwordButton").click();
-      }
+
+    // Allow pressing "Enter" to submit the password
+    passwordInput.addEventListener("keypress", function(e){
+        if(e.key === "Enter"){
+            passwordButton.click();
+        }
     });
+});
+
     
     // Génération de la facture
     function generateInvoice() {
