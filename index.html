@@ -137,22 +137,32 @@
 
       // Trigger GitHub Actions
       fetch("https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches", {
-        method: "POST",
-        headers: {
-          "Authorization": `token YOUR_GITHUB_SECRET_TOKEN`,  // Replace with your actual token
-          "Accept": "application/vnd.github.v3+json",
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          ref: "main",
-          inputs: {
-            student_name: studentName,
-            tutor_name: tutorName,
-            payment_reason: paymentReason,
-            payment_amount: paymentAmount
-          }
-        })
-      })
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${GH_TOKEN}`,
+    "Accept": "application/vnd.github.v3+json",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    ref: "main",
+    inputs: {
+      student_name: studentName,
+      tutor_name: tutorName,
+      payment_reason: paymentReason,
+      payment_amount: paymentAmount
+    }
+  })
+})
+.then(response => response.json())
+.then(data => {
+  if (data.message) {
+    alert("Erreur: " + data.message);
+  } else {
+    alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
+  }
+})
+.catch(error => console.error("Erreur:", error));
+
       .then(response => {
         if (response.status === 204) {
           alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
