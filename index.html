@@ -341,25 +341,47 @@
     
     // Génération de la facture
     function generateInvoice() {
-     fetch("http://localhost:5000/generate_invoice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            student_name: document.getElementById("studentName").value,
-            payment_reason: document.getElementById("paymentReason").value,
-            payment_amount: document.getElementById("paymentAmount").value
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            document.getElementById("invoiceNumber").value = data.invoice_number;
-            alert("Facture générée: " + data.invoice_number + "\nLien: " + data.github_url);
-        } else {
-            alert("Erreur: " + data.error);
+    const studentName = document.getElementById("studentName").value;
+    const paymentReason = document.getElementById("paymentReason").value;
+    const paymentAmount = document.getElementById("paymentAmount").value;
+
+    if (!studentName || !paymentReason || !paymentAmount) {
+        alert("Veuillez remplir tous les champs.");
+        return;
+    }
+
+    // GitHub API URL for triggering Actions
+    const GITHUB_API_URL = "https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches";
+
+    // Prepare data for GitHub Actions
+    const requestData = {
+        ref: "main",
+        inputs: {
+            student_name: studentName,
+            payment_reason: paymentReason,
+            payment_amount: paymentAmount
         }
-    });
-      }
+    };
+
+    fetch(GITHUB_API_URL, {
+        method: "POST",
+        headers: {
+            "Authorization": `token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN`,  // Don't expose it in frontend!
+            "Accept": "application/vnd.github.v3+json",
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestData)
+    })
+    .then(response => {
+        if (response.status === 204) {
+            alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
+        } else {
+            alert("Erreur lors de la génération de la facture.");
+        }
+    })
+    .catch(error => console.error("Erreur:", error));
+}
+
       
       // Mise à jour de l'aperçu de la facture
       document.getElementById('previewInvoiceNumber').textContent = "No: " + invoiceNumber;
