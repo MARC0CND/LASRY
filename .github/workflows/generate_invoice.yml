@@ -32,6 +32,7 @@ jobs:
 
       - name: Generate PDF Invoice
         run: |
+          mkdir -p invoices  # Ensure the folder exists
           echo "<html>
           <head><title>Facture $NEW_INVOICE_NUMBER</title></head>
           <body>
@@ -52,4 +53,3 @@ jobs:
           git add invoices/$NEW_INVOICE_NUMBER.pdf invoice_data.json
           git commit -m "Added invoice $NEW_INVOICE_NUMBER"
           git push origin main
-
