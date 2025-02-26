@@ -5,9 +5,6 @@
   <title>Générateur de Factures - Lasry Education</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* ============================
-       Styles Globaux
-    ============================ */
     body {
       font-family: Arial, sans-serif;
       background-color: #f8f8f8;
@@ -22,12 +19,6 @@
       padding: 20px 40px;
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
-    /* ============================
-       Outil de facturation
-    ============================ */
-    .no-print {
-      display: block;
-    }
     form {
       margin-bottom: 30px;
     }
@@ -36,7 +27,7 @@
       margin-top: 10px;
       font-weight: bold;
     }
-    input[type="text"], input[type="number"], select, textarea {
+    input, select, textarea {
       width: 100%;
       padding: 8px;
       margin-top: 5px;
@@ -56,7 +47,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Facture */
     .invoice {
       margin-top: 30px;
       padding: 40px;
@@ -78,31 +68,10 @@
     .invoice-main {
       margin-bottom: 30px;
     }
-    .invoice-row {
-      display: flex;
-      justify-content: space-between;
-      font-size: 1.5em;
-      font-weight: bold;
-    }
     .invoice-footer {
       border-top: 2px solid #007BFF;
       padding-top: 20px;
       text-align: right;
-    }
-    /* Impression */
-    @media print {
-      @page { size: landscape; }
-      .no-print, button {
-        display: none;
-      }
-      .container {
-        margin: 0;
-        width: 100%;
-      }
-      .invoice {
-        display: block;
-        width: 100%;
-      }
     }
   </style>
 </head>
@@ -111,15 +80,6 @@
   <div class="container">
     <h1>Générateur de Factures - Lasry Education</h1>
     <form id="invoiceForm">
-      <label for="centre">Centre :</label>
-      <select id="centre" required>
-        <option value="">--Sélectionnez un centre--</option>
-        <option value="Laval">Laval</option>
-        <option value="Anjou">Anjou</option>
-        <option value="Acadie">Acadie</option>
-        <option value="West Island">West Island</option>
-      </select>
-      
       <label for="studentName">Nom de l'élève :</label>
       <input type="text" id="studentName" required>
       
@@ -134,7 +94,7 @@
       
       <button type="button" onclick="generateInvoice()">Générer la facture</button>
     </form>
-    
+
     <!-- Aperçu de la facture -->
     <div id="invoicePreview" class="invoice">
       <div class="invoice-header">
@@ -142,10 +102,8 @@
         <div class="invoice-number" id="previewInvoiceNumber"></div>
       </div>
       <div class="invoice-main">
-        <div class="invoice-row">
-          <div id="previewStudentName"></div>
-          <div id="previewPaymentAmount"></div>
-        </div>
+        <div id="previewStudentName"></div>
+        <div id="previewPaymentAmount"></div>
         <div id="previewPaymentReason"></div>
       </div>
       <div class="invoice-footer">
@@ -167,25 +125,21 @@
         return;
       }
 
-      // Mise à jour de l'aperçu de la facture
+      // Display invoice preview
       document.getElementById("previewInvoiceNumber").textContent = "Numéro: Généré Automatiquement";
       document.getElementById("previewStudentName").textContent = studentName;
       document.getElementById("previewPaymentAmount").textContent = "$ " + parseFloat(paymentAmount).toFixed(2);
       document.getElementById("previewPaymentReason").textContent = paymentReason;
       document.getElementById("previewTutorName").textContent = tutorName;
+      document.getElementById("previewDate").textContent = new Date().toLocaleDateString("fr-FR");
 
-      const d = new Date();
-      const months = ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"];
-      document.getElementById("previewDate").textContent = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
-
-      // Affichage de l'aperçu de la facture
       document.getElementById("invoicePreview").style.display = "block";
 
-      // Envoyer les données à GitHub Actions
+      // Trigger GitHub Actions
       fetch("https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches", {
         method: "POST",
         headers: {
-          "Authorization": "token YOUR_GITHUB_PERSONAL_ACCESS_TOKEN",
+          "Authorization": `token YOUR_GITHUB_SECRET_TOKEN`,  // Replace with your actual token
           "Accept": "application/vnd.github.v3+json",
           "Content-Type": "application/json"
         },
