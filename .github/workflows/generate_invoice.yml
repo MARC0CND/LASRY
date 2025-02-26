@@ -51,4 +51,5 @@ jobs:
           git config --global user.email "actions@github.com"
           git add invoices/$NEW_INVOICE_NUMBER.pdf invoice_data.json
           git commit -m "Added invoice $NEW_INVOICE_NUMBER"
-          git push https://MARC0CND:$GH_TOKEN@github.com/MARC0CND/LASRY.git main
+          git push origin main
+
