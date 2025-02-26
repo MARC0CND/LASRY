@@ -341,18 +341,24 @@
     
     // Génération de la facture
     function generateInvoice() {
-      // Récupération des valeurs du formulaire
-      const centre = document.getElementById('centre').value;
-      const invoiceNumber = document.getElementById('invoiceNumber').value;
-      const studentName = document.getElementById('studentName').value;
-      const tutorName = document.getElementById('tutorName').value;
-      const paymentReason = document.getElementById('paymentReason').value;
-      const paymentAmount = document.getElementById('paymentAmount').value;
-      
-      // Vérification du formulaire
-      if (!centre || !invoiceNumber || !studentName || !tutorName || !paymentReason || !paymentAmount) {
-        alert("Veuillez remplir tous les champs.");
-        return;
+     fetch("http://localhost:5000/generate_invoice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            student_name: document.getElementById("studentName").value,
+            payment_reason: document.getElementById("paymentReason").value,
+            payment_amount: document.getElementById("paymentAmount").value
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            document.getElementById("invoiceNumber").value = data.invoice_number;
+            alert("Facture générée: " + data.invoice_number + "\nLien: " + data.github_url);
+        } else {
+            alert("Erreur: " + data.error);
+        }
+    });
       }
       
       // Mise à jour de l'aperçu de la facture
