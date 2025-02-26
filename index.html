@@ -65,9 +65,6 @@
       font-size: 1.2em;
       font-weight: bold;
     }
-    .invoice-main {
-      margin-bottom: 30px;
-    }
     .invoice-footer {
       border-top: 2px solid #007BFF;
       padding-top: 20px;
@@ -111,6 +108,8 @@
         <div id="previewDate"></div>
       </div>
     </div>
+
+    <p id="debugMessage" style="color: red; font-weight: bold;"></p>
   </div>
 
   <script>
@@ -137,40 +136,35 @@
 
       // Trigger GitHub Actions
       fetch("https://api.github.com/repos/MARC0CND/LASRY/actions/workflows/generate_invoice.yml/dispatches", {
-  method: "POST",
-  headers: {
-    "Authorization": `Bearer ${GH_TOKEN}`,
-    "Accept": "application/vnd.github.v3+json",
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    ref: "main",
-    inputs: {
-      student_name: studentName,
-      tutor_name: tutorName,
-      payment_reason: paymentReason,
-      payment_amount: paymentAmount
-    }
-  })
-})
-.then(response => response.json())
-.then(data => {
-  if (data.message) {
-    alert("Erreur: " + data.message);
-  } else {
-    alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
-  }
-})
-.catch(error => console.error("Erreur:", error));
-
-      .then(response => {
-        if (response.status === 204) {
-          alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
-        } else {
-          alert("Erreur lors de la génération de la facture.");
-        }
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer YOUR_GITHUB_SECRET_TOKEN`,  // Replace with GitHub Secret Token
+          "Accept": "application/vnd.github.v3+json",
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          ref: "main",
+          inputs: {
+            student_name: studentName,
+            tutor_name: tutorName,
+            payment_reason: paymentReason,
+            payment_amount: paymentAmount
+          }
+        })
       })
-      .catch(error => console.error("Erreur:", error));
+      .then(response => response.json())
+      .then(data => {
+          console.log("GitHub API Response:", data);
+          if (data.message) {
+              document.getElementById("debugMessage").textContent = "Erreur: " + data.message;
+          } else {
+              alert("Facture en cours de génération! Vérifiez le dossier invoices dans quelques secondes.");
+          }
+      })
+      .catch(error => {
+          console.error("Erreur:", error);
+          document.getElementById("debugMessage").textContent = "Erreur lors de la connexion à GitHub API.";
+      });
     }
   </script>
 
